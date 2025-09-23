@@ -133,7 +133,7 @@ inline void __checkCudaErrors(CUresult code, const char *file, const int line) {
 
 inline std::string join_sig(const c10::SmallVector<std::string> &signature) {
   std::stringstream ss;
-  for (int i = 0; i < signature.size(); i++) {
+  for (size_t i = 0; i < signature.size(); i++) {
     if (i == 0) {
       ss << signature[i];
     } else {

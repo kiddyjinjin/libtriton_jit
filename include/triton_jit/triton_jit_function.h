@@ -300,7 +300,8 @@ void TritonJITFunction::operator()(CUstream stream,
   CUdevice device_index;
   checkCudaErrors(cuCtxGetDevice(&device_index));
   const TritonKernel &kernel = this->get_kernel(full_signature, num_warps, num_stages, device_index);
-  kernel.launch(grid_x, grid_y, grid_z, num_warps, stream, buffer.get_ptrs());
+  c10::SmallVector<void *> ptrs = buffer.get_ptrs();
+  kernel.launch(grid_x, grid_y, grid_z, num_warps, stream, ptrs.data());
   return;
 }
 static_assert(std::is_move_constructible_v<TritonJITFunction>);

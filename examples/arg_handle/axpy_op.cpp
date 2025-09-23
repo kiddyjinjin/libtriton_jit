@@ -153,7 +153,8 @@ at::Tensor axpy3_manual(const at::Tensor &x,
   checkCudaErrors(cuCtxGetDevice(&device_index));
 
   const TritonKernel &kernel = f.get_kernel(full_signature, num_warps, num_stages, device_index);
-  kernel.launch(num_blocks, 1, 1, num_warps, stream, buffer.get_ptrs());
+  c10::SmallVector<void *> ptrs = buffer.get_ptrs();
+  kernel.launch(num_blocks, 1, 1, num_warps, stream, ptrs.data());
   return out;
 }
 

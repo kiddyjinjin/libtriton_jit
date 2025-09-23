@@ -25,10 +25,10 @@ struct ParameterBuffer {
   c10::SmallVector<std::byte> buff_;
   size_t cursor_ = 0;
   c10::SmallVector<size_t> offsets_;
-  c10::SmallVector<void *> ptrs_;
 
   void reserve(size_t new_cap) {
-    this->buff_.reserve(new_cap * 4);  // assume 4 bytes / arg
+    const int ESTIMATED_BYTES_PER_ARG = 4;
+    this->buff_.reserve(new_cap * ESTIMATED_BYTES_PER_ARG);
     this->offsets_.reserve(new_cap);
   }
 
@@ -46,13 +46,14 @@ struct ParameterBuffer {
     this->cursor_ = offset + size;
   }
 
-  void **get_ptrs() {
-    this->ptrs_.reserve(this->offsets_.size());
+  c10::SmallVector<void *> get_ptrs() {
+    c10::SmallVector<void *> ptrs;
+    ptrs.reserve(this->offsets_.size());
     std::byte *start = this->buff_.data();
     for (const size_t off : this->offsets_) {
-      this->ptrs_.push_back(start + off);
+      ptrs.push_back(start + off);
     }
-    return this->ptrs_.data();
+    return ptrs;
   }
 
   size_t size() const {
