@@ -238,7 +238,6 @@ struct ArgHandle {
   }
 #ifdef TRITON_GE_3P5
   void append_scratch() {
-    std::cout << "TRITON_GE_3P5 TRUE" << std::endl;
     void *global_scratch = nullptr;
     this->buf.push_arg(global_scratch);
     void *profile_scratch = nullptr;
@@ -246,7 +245,6 @@ struct ArgHandle {
   }
 #else
   void append_scratch() {
-    std::cout << "TRITON_GE_3P5 FALSE" << std::endl;
     void *global_scratch = nullptr;
     this->buf.push_arg(global_scratch);
   }
