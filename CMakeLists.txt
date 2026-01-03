@@ -47,7 +47,7 @@ option(TRITON_JIT_INSTALL "whether to install the packages" ${PROJECT_IS_TOP_LEV
 # --------------------------- dependencies ---------------------------
 include(FetchContent)
 # dependencies: cuda toolkit
-find_package(CUDAToolkit REQUIRED COMPONENTS cuda_driver)
+find_package(CUDAToolkit REQUIRED COMPONENTS cuda_driver cudart)
 # dependencies: python: we will use it for embeddeing the interpreter
 find_package(Python REQUIRED COMPONENTS Interpreter Development)
 message(STATUS "Python site-packages path: ${Python_SITELIB}")

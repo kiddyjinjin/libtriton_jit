@@ -9,6 +9,8 @@
 #include <stdexcept>
 #include <string>
 
+#include <cuda_runtime_api.h>
+
 namespace triton_jit {
 std::filesystem::path get_path_of_this_library() {
   // This function gives the library path of this library as runtime, similar to the $ORIGIN
@@ -66,11 +68,22 @@ std::filesystem::path get_home_directory() {
 void ensure_cuda_context() {
   CUcontext pctx;
   checkCudaErrors(cuCtxGetCurrent(&pctx));
-  if (!pctx) {
-    CUdevice device_index;
-    checkCudaErrors(cuDeviceGet(&device_index, /*ordinal*/ 0));
-    checkCudaErrors(cuDevicePrimaryCtxRetain(&pctx, device_index));
-    checkCudaErrors(cuCtxSetCurrent(pctx));
+  if (pctx) {
+    return;
   }
+
+  // Prefer the runtime's current device if already set; otherwise fall back to device 0.
+  int runtime_dev = -1;
+  cudaError_t rt_status = cudaGetDevice(&runtime_dev);
+
+  CUdevice device_index;
+  if (rt_status == cudaSuccess && runtime_dev >= 0) {
+    checkCudaErrors(cuDeviceGet(&device_index, runtime_dev));
+  } else {
+    checkCudaErrors(cuDeviceGet(&device_index, /*ordinal*/ 0));
+  }
+
+  checkCudaErrors(cuDevicePrimaryCtxRetain(&pctx, device_index));
+  checkCudaErrors(cuCtxSetCurrent(pctx));
 }
 }  // namespace triton_jit

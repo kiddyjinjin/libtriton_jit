@@ -91,7 +91,7 @@ void TritonKernel::launch(unsigned int grid_x,
                           void** args) const {
   this->lazy_init_handle();
 
-  LOG(INFO) << "cuLaunchKernel";
+  // LOG(INFO) << "cuLaunchKernel";
   checkCudaErrors(cuLaunchKernel(this->fn_,
                                  /*grid*/ grid_x,
                                  grid_y,
